@@ -2,28 +2,69 @@ extends Node
 
 const SAVE_PATH := "user://astralis_save.cfg"
 var relic_awakened := false
+var player_level := 1
+var player_xp := 0
+var gold := 0
+var defeated_bosses: Array[String] = []
+var inventory: Dictionary = {"Эфирный осколок": 0, "Зелье лечения": 2}
 
 func _ready() -> void:
 	load_game()
 
 func load_game() -> void:
 	var config := ConfigFile.new()
-	var error := config.load(SAVE_PATH)
-	if error == OK:
-		relic_awakened = bool(config.get_value("story", "first_relic_awakened", false))
+	if config.load(SAVE_PATH) != OK:
+		return
+	relic_awakened = bool(config.get_value("story", "first_relic_awakened", false))
+	player_level = int(config.get_value("player", "level", 1))
+	player_xp = int(config.get_value("player", "xp", 0))
+	gold = int(config.get_value("player", "gold", 0))
+	defeated_bosses = config.get_value("story", "defeated_bosses", [])
+	inventory = config.get_value("inventory", "items", inventory)
+
+func save_game() -> void:
+	var config := ConfigFile.new()
+	config.set_value("story", "first_relic_awakened", relic_awakened)
+	config.set_value("story", "defeated_bosses", defeated_bosses)
+	config.set_value("player", "level", player_level)
+	config.set_value("player", "xp", player_xp)
+	config.set_value("player", "gold", gold)
+	config.set_value("inventory", "items", inventory)
+	config.set_value("meta", "save_version", 2)
+	var error := config.save(SAVE_PATH)
+	if error != OK:
+		push_warning("ASTRALIS: save failed (%d)." % error)
 
 func save_relic_awakened(value: bool) -> void:
 	relic_awakened = value
-	var config := ConfigFile.new()
-	config.set_value("story", "first_relic_awakened", relic_awakened)
-	config.set_value("meta", "save_version", 1)
-	var error := config.save(SAVE_PATH)
-	if error != OK:
-		push_warning("ASTRALIS: unable to save progress (error %d)." % error)
+	save_game()
+
+func award_xp(amount: int) -> bool:
+	player_xp += amount
+	var leveled_up := false
+	while player_xp >= player_level * 100:
+		player_xp -= player_level * 100
+		player_level += 1
+		leveled_up = true
+	save_game()
+	return leveled_up
+
+func add_item(item_name: String, amount: int = 1) -> void:
+	inventory[item_name] = int(inventory.get(item_name, 0)) + amount
+	save_game()
+
+func record_boss_defeat(boss_name: String) -> void:
+	if not defeated_bosses.has(boss_name):
+		defeated_bosses.append(boss_name)
+		gold += 100
+		add_item("Эфирный осколок", 3)
+	save_game()
 
 func reset_progress() -> void:
 	relic_awakened = false
-	var config := ConfigFile.new()
-	config.set_value("story", "first_relic_awakened", false)
-	config.set_value("meta", "save_version", 1)
-	config.save(SAVE_PATH)
+	player_level = 1
+	player_xp = 0
+	gold = 0
+	defeated_bosses.clear()
+	inventory = {"Эфирный осколок": 0, "Зелье лечения": 2}
+	save_game()
