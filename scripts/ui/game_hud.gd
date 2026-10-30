@@ -8,17 +8,12 @@ var hint_label: Label
 var status_label: Label
 var pause_panel: PanelContainer
 var _pulse := 0.0
-const MOBILE_CONTROLS_SCRIPT = preload("res://scripts/ui/mobile_controls.gd")
+var fps_label: Label
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var mobile_controls := Control.new()
-	mobile_controls.name = "MobileControls"
-	mobile_controls.set_script(MOBILE_CONTROLS_SCRIPT)
-	mobile_controls.mouse_filter = Control.MOUSE_FILTER_PASS
-	add_child(mobile_controls)
 	title_label = _make_label("ASTRALIS  /  THE FIRST ECHO", Vector2(28, 22), 23)
 	objective_label = _make_label("ЦЕЛЬ  •  Найдите древний источник света", Vector2(30, 58), 17)
 	hint_label = _make_label("Исследуйте руины и найдите светящийся реликт", Vector2(30, 88), 14)
@@ -35,9 +30,13 @@ func _ready() -> void:
 	pause_button.pressed.connect(_toggle_pause)
 	add_child(pause_button)
 	get_viewport().size_changed.connect(_position_pause_button.bind(pause_button))
+	fps_label = _make_label("FPS: --", Vector2(30, 151), 13)
+	fps_label.add_theme_color_override("font_color", Color(0.72, 0.86, 1.0))
 
 func _process(delta: float) -> void:
 	_pulse += delta
+	if is_instance_valid(fps_label):
+		fps_label.text = "FPS: %d" % Engine.get_frames_per_second()
 	if is_instance_valid(player):
 		var energy := int(player.get("energy"))
 		var hp := int(player.get("health"))
