@@ -57,9 +57,19 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
 
       - name: Import project and validate scripts
+        shell: bash
         run: |
-          Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import
-          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --quit
+          set -euo pipefail
+          Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import 2>&1 | tee import.log
+          if grep -E "SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR: Failed to load script" import.log; then
+            echo "Godot import reported script errors."
+            exit 1
+          fi
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --quit 2>&1 | tee startup.log
+          if grep -E "SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR: Failed to load script" startup.log; then
+            echo "Godot startup reported script errors."
+            exit 1
+          fi
 
       - name: Export debug APK
         run: |
