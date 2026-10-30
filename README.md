@@ -50,3 +50,7 @@ The project files have been committed to GitHub, but the current revision has **
 ## Asset policy
 
 Only assets whose individual licences permit the intended use will be included. Prefer CC0 assets where practical. Every imported asset must be recorded in [ASSET_CREDITS.md](ASSET_CREDITS.md), including source, creator, licence and original asset page. Never assume that every download on a marketplace has the same licence.
+
+
+## Automated Android build
+GitHub Actions builds a debug APK for arm64 Android on every push to `main`. The generated APK is attached to the workflow run as the `ASTRALIS-Android-APK` artifact (temporary build download, not a Play Store release).
