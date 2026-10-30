@@ -100,6 +100,7 @@ func _build_first_region() -> void:
 	_add_pulse_dummy(Vector3(5, 0, -7))
 	_add_glowing_marker(Vector3(0, 0.0, -8))
 	_add_ambient_lights()
+	_add_frozen_ruins()
 
 func _add_path() -> void:
 	var path := MeshInstance3D.new()
@@ -288,3 +289,27 @@ func _add_ambient_lights() -> void:
 		light.light_energy = 0.8
 		light.omni_range = 8.0
 		add_child(light)
+
+func _add_frozen_ruins() -> void:
+	var ice := StandardMaterial3D.new()
+	ice.albedo_color = Color(0.18, 0.42, 0.58)
+	ice.roughness = 0.28
+	ice.metallic = 0.18
+	for i in range(9):
+		var shard := MeshInstance3D.new()
+		var mesh := PrismMesh.new()
+		mesh.size = Vector3(randf_range(1.0, 2.2), randf_range(3.0, 6.0), randf_range(1.0, 2.0))
+		shard.mesh = mesh
+		shard.position = Vector3(randf_range(-12.0,12.0), mesh.size.y * 0.5, -52.0 + randf_range(-9.0,9.0))
+		shard.rotation.z = randf_range(-0.18,0.18)
+		shard.material_override = ice
+		add_child(shard)
+	var platform := MeshInstance3D.new()
+	var platform_mesh := CylinderMesh.new()
+	platform_mesh.top_radius = 10.0
+	platform_mesh.bottom_radius = 11.0
+	platform_mesh.height = 0.6
+	platform.mesh = platform_mesh
+	platform.position = Vector3(0,-0.05,-68)
+	platform.material_override = ice
+	add_child(platform)
