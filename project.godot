@@ -10,6 +10,10 @@ run/main_scene="res://scenes/main/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/description="An original mobile-first 3D fantasy action RPG."
 
+[autoload]
+
+SaveManager="*res://scripts/systems/save_manager.gd"
+
 [display]
 
 window/size/viewport_width=1280
