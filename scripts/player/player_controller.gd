@@ -17,8 +17,16 @@ var _dash_time := 0.0
 var _dash_cooldown := 0.0
 var _cast_cooldown := 0.0
 var _interaction_hint := ""
+var _character: Node3D
 
 func _ready() -> void:
+	var old_body := visual.get_node_or_null("Body")
+	if old_body:
+		old_body.queue_free()
+	_character = Node3D.new()
+	_character.name = "AnimeAdventurer"
+	_character.set_script(load("res://scripts/player/anime_character_visual.gd"))
+	visual.add_child(_character)
 	for action in ["dash", "cast", "interact"]:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
@@ -69,12 +77,8 @@ func _physics_process(delta: float) -> void:
 	_update_interaction_hint()
 
 func _update_procedural_motion(amount: float, delta: float) -> void:
-	var body := visual.get_node_or_null("Body") as Node3D
-	if body == null:
-		return
-	var speed := 9.0 if amount > 0.1 else 2.0
-	var bob := 0.045 if amount > 0.1 else 0.012
-	body.position.y = lerp(body.position.y, 0.9 + sin(_elapsed * speed) * bob, delta * 9.0)
+	if is_instance_valid(_character) and _character.has_method("animate_locomotion"):
+		_character.animate_locomotion(amount, delta, not is_on_floor())
 
 func _nearest_interactable() -> Node3D:
 	var nearest: Node3D
