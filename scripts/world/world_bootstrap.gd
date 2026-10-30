@@ -9,11 +9,37 @@ var _hud: Control
 var _relic: Area3D
 
 func _ready() -> void:
+	_setup_sky_and_lighting()
 	_build_first_region()
 	var player := PLAYER_SCENE.instantiate()
 	player.position = Vector3(0.0, 1.2, 7.0)
 	add_child(player)
 	_create_hud(player)
+
+func _setup_sky_and_lighting() -> void:
+	var world := WorldEnvironment.new()
+	var environment := Environment.new()
+	environment.background_mode = Environment.BG_SKY
+	var sky := Sky.new()
+	var sky_material := ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.035, 0.075, 0.19)
+	sky_material.sky_horizon_color = Color(0.34, 0.56, 0.72)
+	sky_material.ground_bottom_color = Color(0.055, 0.075, 0.12)
+	sky_material.ground_horizon_color = Color(0.22, 0.34, 0.42)
+	sky_material.sun_angle_max = 18.0
+	sky.sky_material = sky_material
+	environment.sky = sky
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	environment.ambient_light_energy = 0.62
+	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	world.environment = environment
+	add_child(world)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-48.0, -28.0, 0.0)
+	sun.light_color = Color(0.82, 0.9, 1.0)
+	sun.light_energy = 1.15
+	sun.shadow_enabled = true
+	add_child(sun)
 
 func _create_hud(player: Node3D) -> void:
 	var layer := CanvasLayer.new()
