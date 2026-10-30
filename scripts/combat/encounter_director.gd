@@ -5,6 +5,7 @@ func _ready() -> void:
 	_spawn("Echo Wraith", Vector3(8,0,-12), 45, false)
 	_spawn("Echo Wraith", Vector3(-10,0,-22), 55, false)
 	_spawn("VARKHOS — Fallen Guardian", Vector3(0,0,-36), 420, true)
+	_spawn("NYTHERA — Queen of the Void", Vector3(0,0,-68), 560, true)
 func _spawn(title: String, at: Vector3, hp: int, boss: bool) -> void:
 	var enemy := CharacterBody3D.new()
 	enemy.name = title.replace(" ","_")
