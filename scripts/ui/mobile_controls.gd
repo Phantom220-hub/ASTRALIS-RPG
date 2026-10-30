@@ -36,9 +36,9 @@ func _draw() -> void:
 	draw_circle(cast_pos, BUTTON_RADIUS * 0.82, Color(0.42, 0.35, 0.86, 0.55))
 	draw_arc(cast_pos, BUTTON_RADIUS * 0.82, 0.0, TAU, 40, Color(0.86, 0.82, 1.0, 0.85), 2.0)
 	draw_string(ThemeDB.fallback_font, cast_pos + Vector2(-13, 5), "ECHO", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
-\tdraw_circle(interact_pos, BUTTON_RADIUS * 0.72, Color(0.78, 0.62, 0.28, 0.48))
-\tdraw_arc(interact_pos, BUTTON_RADIUS * 0.72, 0.0, TAU, 40, Color(1.0, 0.91, 0.7, 0.85), 2.0)
-\tdraw_string(ThemeDB.fallback_font, interact_pos + Vector2(-13, 5), "USE", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
+	draw_circle(interact_pos, BUTTON_RADIUS * 0.72, Color(0.78, 0.62, 0.28, 0.48))
+	draw_arc(interact_pos, BUTTON_RADIUS * 0.72, 0.0, TAU, 40, Color(1.0, 0.91, 0.7, 0.85), 2.0)
+	draw_string(ThemeDB.fallback_font, interact_pos + Vector2(-13, 5), "USE", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
