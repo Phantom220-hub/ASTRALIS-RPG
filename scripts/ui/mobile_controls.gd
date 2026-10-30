@@ -33,12 +33,21 @@ func _draw() -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			_handle_press(event.index, event.position)
+			var size := get_rect().size
+			var jump_pos := Vector2(size.x - 92.0, size.y - 105.0)
+			var dash_pos := Vector2(size.x - 190.0, size.y - 72.0)
+			var is_button := event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS
+			var is_joystick := event.position.x < size.x * 0.48 and event.position.y > size.y * 0.48
+			if is_button or is_joystick:
+				_handle_press(event.index, event.position)
+				accept_event()
 		else:
-			_handle_release(event.index)
-	elif event is InputEventScreenDrag:
-		if event.index == _joy_touch:
-			_update_joystick(event.position)
+			if event.index == _joy_touch or event.index == _jump_touch or event.index == _dash_touch:
+				_handle_release(event.index)
+				accept_event()
+	elif event is InputEventScreenDrag and event.index == _joy_touch:
+		_update_joystick(event.position)
+		accept_event()
 
 func _handle_press(index: int, pos: Vector2) -> void:
 	var size := get_rect().size
