@@ -40,6 +40,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_pulse += delta
 	fps_label.text = "FPS: %d" % Engine.get_frames_per_second()
+	if SaveManager.defeated_bosses.has("NYTHERA — Queen of the Void"):
+		objective_label.text = "ГЛАВА ЗАВЕРШЕНА  •  Эхо мира восстановлено"
+	elif SaveManager.defeated_bosses.has("VARKHOS — Fallen Guardian"):
+		objective_label.text = "ФИНАЛЬНАЯ ЦЕЛЬ  •  Найдите NYTHERA в ледяных руинах"
+	elif SaveManager.relic_awakened:
+		objective_label.text = "ГЛАВНАЯ ЦЕЛЬ  •  Победите VARKHOS у древних руин"
+	else:
+		objective_label.text = "ЦЕЛЬ  •  Найдите древний источник света"
 	if is_instance_valid(player):
 		status_label.text = "ЭНЕРГИЯ  %d%%     HP  %d" % [int(player.get("energy")), int(player.get("health"))]
 		progression_label.text = "УРОВЕНЬ %d  •  XP %d/%d  •  ЗОЛОТО %d" % [SaveManager.player_level, SaveManager.player_xp, SaveManager.player_level * 100, SaveManager.gold]
