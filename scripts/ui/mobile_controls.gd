@@ -26,6 +26,7 @@ func _draw() -> void:
 	var jump_pos := Vector2(size.x - 92.0, size.y - 105.0)
 	var dash_pos := Vector2(size.x - 190.0, size.y - 72.0)
 	var cast_pos := Vector2(size.x - 190.0, size.y - 172.0)
+	var interact_pos := Vector2(size.x - 92.0, size.y - 220.0)
 	draw_circle(jump_pos, BUTTON_RADIUS, Color(0.18, 0.58, 0.86, 0.55))
 	draw_arc(jump_pos, BUTTON_RADIUS, 0.0, TAU, 40, Color(0.82, 0.94, 1.0, 0.8), 2.0)
 	draw_string(ThemeDB.fallback_font, jump_pos + Vector2(-14, 6), "JUMP", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)
@@ -34,7 +35,10 @@ func _draw() -> void:
 	draw_string(ThemeDB.fallback_font, dash_pos + Vector2(-14, 5), "DASH", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 	draw_circle(cast_pos, BUTTON_RADIUS * 0.82, Color(0.42, 0.35, 0.86, 0.55))
 	draw_arc(cast_pos, BUTTON_RADIUS * 0.82, 0.0, TAU, 40, Color(0.86, 0.82, 1.0, 0.85), 2.0)
-	draw_string(ThemeDB.fallback_font, cast_pos + Vector2(-13, 5), "ECHO", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)\n\tdraw_circle(interact_pos, BUTTON_RADIUS * 0.72, Color(0.78, 0.62, 0.28, 0.48))\n\tdraw_arc(interact_pos, BUTTON_RADIUS * 0.72, 0.0, TAU, 40, Color(1.0, 0.91, 0.7, 0.85), 2.0)\n\tdraw_string(ThemeDB.fallback_font, interact_pos + Vector2(-13, 5), "USE", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
+	draw_string(ThemeDB.fallback_font, cast_pos + Vector2(-13, 5), "ECHO", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
+\tdraw_circle(interact_pos, BUTTON_RADIUS * 0.72, Color(0.78, 0.62, 0.28, 0.48))
+\tdraw_arc(interact_pos, BUTTON_RADIUS * 0.72, 0.0, TAU, 40, Color(1.0, 0.91, 0.7, 0.85), 2.0)
+\tdraw_string(ThemeDB.fallback_font, interact_pos + Vector2(-13, 5), "USE", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -43,7 +47,8 @@ func _gui_input(event: InputEvent) -> void:
 			var jump_pos := Vector2(size.x - 92.0, size.y - 105.0)
 			var dash_pos := Vector2(size.x - 190.0, size.y - 72.0)
 			var cast_pos := Vector2(size.x - 190.0, size.y - 172.0)
-			var is_button := event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS or event.position.distance_to(cast_pos) <= BUTTON_RADIUS
+			var interact_pos := Vector2(size.x - 92.0, size.y - 220.0)
+			var is_button := event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS or event.position.distance_to(cast_pos) <= BUTTON_RADIUS or event.position.distance_to(interact_pos) <= BUTTON_RADIUS
 			var is_joystick := event.position.x < size.x * 0.48 and event.position.y > size.y * 0.48
 			if is_button or is_joystick:
 				_handle_press(event.index, event.position)
@@ -61,6 +66,7 @@ func _handle_press(index: int, pos: Vector2) -> void:
 	var jump_pos := Vector2(size.x - 92.0, size.y - 105.0)
 	var dash_pos := Vector2(size.x - 190.0, size.y - 72.0)
 	var cast_pos := Vector2(size.x - 190.0, size.y - 172.0)
+	var interact_pos := Vector2(size.x - 92.0, size.y - 220.0)
 	if pos.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25:
 		_jump_touch = index
 		Input.action_press("ui_accept")
@@ -70,6 +76,9 @@ func _handle_press(index: int, pos: Vector2) -> void:
 	elif pos.distance_to(cast_pos) <= BUTTON_RADIUS:
 		_cast_touch = index
 		Input.action_press("cast")
+	elif pos.distance_to(interact_pos) <= BUTTON_RADIUS:
+		_interact_touch = index
+		Input.action_press("interact")
 	elif pos.x < size.x * 0.48 and pos.y > size.y * 0.48:
 		_joy_touch = index
 		_update_joystick(pos)
@@ -88,6 +97,9 @@ func _handle_release(index: int) -> void:
 	if index == _cast_touch:
 		_cast_touch = -1
 		Input.action_release("cast")
+	if index == _interact_touch:
+		_interact_touch = -1
+		Input.action_release("interact")
 	queue_redraw()
 
 func _update_joystick(pos: Vector2) -> void:
