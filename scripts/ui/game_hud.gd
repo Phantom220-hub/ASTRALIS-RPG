@@ -27,6 +27,7 @@ func _ready() -> void:
 	hint_label.add_theme_color_override("font_color", Color(0.8, 0.88, 0.96))
 	status_label.add_theme_color_override("font_color", Color(0.52, 0.92, 0.9))
 	var pause_button := Button.new()
+	pause_button.name = "PauseButton"
 	pause_button.text = "Ⅱ"
 	pause_button.position = Vector2(get_viewport_rect().size.x - 68, 18)
 	pause_button.size = Vector2(48, 42)
