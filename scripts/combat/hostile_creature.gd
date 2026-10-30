@@ -9,6 +9,7 @@ var _phase := 1
 var _time := 0.0
 var _player: Node3D
 var _reward_claimed := false
+var _locked_boss := false
 var _body: MeshInstance3D
 var _bar: Label3D
 
@@ -16,6 +17,7 @@ func _ready() -> void:
 	health = max_health
 	add_to_group("hostile_creatures")
 	_player = get_tree().get_first_node_in_group("player")
+	_locked_boss = boss_mode and display_name == "NYTHERA — Queen of the Void" and not SaveManager.defeated_bosses.has("VARKHOS — Fallen Guardian")
 	var shape := CapsuleShape3D.new()
 	shape.radius = 0.62 if boss_mode else 0.38
 	shape.height = 2.7 if boss_mode else 1.6
@@ -60,6 +62,14 @@ func _physics_process(delta: float) -> void:
 	if health <= 0:
 		return
 	_time += delta
+	if _locked_boss:
+		if SaveManager.defeated_bosses.has("VARKHOS — Fallen Guardian"):
+			_locked_boss = false
+			_bar.text = display_name + " • ПРОБУЖДЕНИЕ"
+		else:
+			velocity = Vector3.ZERO
+			_body.position.y = 1.35 + sin(_time * 1.4) * 0.12
+			return
 	_cooldown = maxf(0.0, _cooldown - delta)
 	if not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
