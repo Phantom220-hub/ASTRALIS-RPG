@@ -18,9 +18,13 @@ var _dash_cooldown := 0.0
 var _cast_cooldown := 0.0
 var _interaction_hint := ""
 var _character: Node3D
+var level := 1
+var experience := 0
 
 func _ready() -> void:
 	add_to_group("player")
+	level = SaveManager.player_level
+	experience = SaveManager.player_xp
 	var old_body := visual.get_node_or_null("Body")
 	if old_body:
 		old_body.queue_free()
@@ -130,6 +134,9 @@ func _cast_echo_pulse() -> void:
 	tween.tween_property(pulse, "scale", Vector3.ONE * 5.0, 0.32)
 	tween.parallel().tween_property(pulse, "transparency", 1.0, 0.32)
 	tween.tween_callback(pulse.queue_free)
+	for enemy in get_tree().get_nodes_in_group("hostile_creatures"):
+		if enemy is Node3D and enemy.has_method("receive_damage") and global_position.distance_to(enemy.global_position) < 8.0:
+			enemy.receive_damage(45)
 	for target in get_tree().get_nodes_in_group("pulse_targets"):
 		if target is Node3D and global_position.distance_to(target.global_position) < 8.0:
 			if target.has_method("receive_pulse"):
@@ -159,3 +166,12 @@ func take_damage(amount: int) -> void:
 		energy = 100.0
 		global_position = Vector3(0.0, 1.2, 7.0)
 		velocity = Vector3.ZERO
+
+func award_xp(amount: int) -> void:
+	var leveled_up: bool = SaveManager.award_xp(amount)
+	level = SaveManager.player_level
+	experience = SaveManager.player_xp
+	if leveled_up:
+		health = 100
+		energy = 100.0
+		move_speed += 0.15
