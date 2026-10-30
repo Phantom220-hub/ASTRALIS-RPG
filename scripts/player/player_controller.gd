@@ -20,6 +20,7 @@ var _interaction_hint := ""
 var _character: Node3D
 
 func _ready() -> void:
+	add_to_group("player")
 	var old_body := visual.get_node_or_null("Body")
 	if old_body:
 		old_body.queue_free()
@@ -27,7 +28,7 @@ func _ready() -> void:
 	_character.name = "AnimeAdventurer"
 	_character.set_script(load("res://scripts/player/anime_character_visual.gd"))
 	visual.add_child(_character)
-	for action in ["dash", "cast", "interact"]:
+	for action in ["dash", "cast", "interact", "attack"]:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 	var interact_key := InputEventKey.new()
@@ -69,6 +70,8 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("interact"):
 		_try_interact()
+	if Input.is_action_just_pressed("attack"):
+		_perform_attack()
 	if Input.is_action_just_pressed("cast") and _cast_cooldown <= 0.0 and energy >= 12.0:
 		_cast_echo_pulse()
 
@@ -136,3 +139,23 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag:
 		camera_pivot.rotate_y(-event.relative.x * 0.003)
 		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x - event.relative.y * 0.003, -0.65, 0.35)
+
+func _perform_attack() -> void:
+	if energy < 5.0:
+		return
+	energy -= 5.0
+	var forward := -visual.global_basis.z
+	for enemy in get_tree().get_nodes_in_group("hostile_creatures"):
+		if enemy is Node3D and enemy.has_method("receive_damage"):
+			var offset: Vector3 = enemy.global_position - global_position
+			var distance := offset.length()
+			if distance <= 3.4 and forward.dot(offset.normalized()) > -0.15:
+				enemy.receive_damage(28)
+
+func take_damage(amount: int) -> void:
+	health = maxi(0, health - amount)
+	if health == 0:
+		health = 100
+		energy = 100.0
+		global_position = Vector3(0.0, 1.2, 7.0)
+		velocity = Vector3.ZERO
