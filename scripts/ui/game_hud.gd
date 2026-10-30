@@ -8,11 +8,17 @@ var hint_label: Label
 var status_label: Label
 var pause_panel: PanelContainer
 var _pulse := 0.0
+const MOBILE_CONTROLS_SCRIPT = preload("res://scripts/ui/mobile_controls.gd")
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	var mobile_controls := Control.new()
+	mobile_controls.name = "MobileControls"
+	mobile_controls.set_script(MOBILE_CONTROLS_SCRIPT)
+	mobile_controls.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(mobile_controls)
 	title_label = _make_label("ASTRALIS  /  THE FIRST ECHO", Vector2(28, 22), 23)
 	objective_label = _make_label("ЦЕЛЬ  •  Найдите древний источник света", Vector2(30, 58), 17)
 	hint_label = _make_label("Исследуйте руины и найдите светящийся реликт", Vector2(30, 88), 14)
