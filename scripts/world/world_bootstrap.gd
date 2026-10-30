@@ -5,7 +5,8 @@ const RELIC_SCRIPT := preload("res://scripts/world/ancient_relic.gd")
 const DUMMY_SCRIPT := preload("res://scripts/world/waypoint_dummy.gd")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 
-var _hud: Control\nvar _relic: Area3D
+var _hud: Control
+var _relic: Area3D
 
 func _ready() -> void:
 	_build_first_region()
