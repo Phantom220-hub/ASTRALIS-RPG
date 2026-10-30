@@ -55,7 +55,7 @@ func _ready() -> void:
 	_bar.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_bar.font_size = 32
 	_bar.pixel_size = 0.006
-	_bar.add_theme_font_size_override("font_size", 14 if boss_mode else 11)
+	_bar.font_size = 64 if boss_mode else 42
 	add_child(_bar)
 
 func _physics_process(delta: float) -> void:
