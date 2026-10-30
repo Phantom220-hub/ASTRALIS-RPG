@@ -48,8 +48,8 @@ func _gui_input(event: InputEvent) -> void:
 			var dash_pos := Vector2(size.x - 190.0, size.y - 72.0)
 			var cast_pos := Vector2(size.x - 190.0, size.y - 172.0)
 			var interact_pos := Vector2(size.x - 92.0, size.y - 220.0)
-			var is_button := event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS or event.position.distance_to(cast_pos) <= BUTTON_RADIUS or event.position.distance_to(interact_pos) <= BUTTON_RADIUS
-			var is_joystick := event.position.x < size.x * 0.48 and event.position.y > size.y * 0.48
+			var is_button: bool = event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS or event.position.distance_to(cast_pos) <= BUTTON_RADIUS or event.position.distance_to(interact_pos) <= BUTTON_RADIUS
+			var is_joystick: bool = event.position.x < size.x * 0.48 and event.position.y > size.y * 0.48
 			if is_button or is_joystick:
 				_handle_press(event.index, event.position)
 				accept_event()
