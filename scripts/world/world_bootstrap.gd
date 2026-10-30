@@ -26,8 +26,11 @@ func _create_hud(player: Node3D) -> void:
 	var relic := get_tree().get_first_node_in_group("ancient_relic")
 	if relic:
 		relic.relic_activated.connect(_on_relic_activated)
+		if SaveManager.relic_awakened:
+			relic.interact()
 
 func _on_relic_activated() -> void:
+	SaveManager.save_relic_awakened(true)
 	if is_instance_valid(_hud):
 		_hud.set_relic_complete()
 
