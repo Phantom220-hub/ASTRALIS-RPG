@@ -9,7 +9,6 @@ var _hud: Control
 var _relic: Area3D
 
 func _ready() -> void:
-	_setup_sky_and_lighting()
 	_build_first_region()
 	var player := PLAYER_SCENE.instantiate()
 	player.position = Vector3(0.0, 1.2, 7.0)
