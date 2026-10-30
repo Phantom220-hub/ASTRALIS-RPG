@@ -4,6 +4,7 @@ const PLAYER_SCENE := preload("res://scenes/player/Player.tscn")
 const RELIC_SCRIPT := preload("res://scripts/world/ancient_relic.gd")
 const DUMMY_SCRIPT := preload("res://scripts/world/waypoint_dummy.gd")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
+const ENCOUNTER_SCRIPT := preload("res://scripts/combat/encounter_director.gd")
 
 var _hud: Control
 var _relic: Area3D
@@ -13,6 +14,10 @@ func _ready() -> void:
 	var player := PLAYER_SCENE.instantiate()
 	player.position = Vector3(0.0, 1.2, 7.0)
 	add_child(player)
+	var encounters := Node3D.new()
+	encounters.name = "EncounterDirector"
+	encounters.set_script(ENCOUNTER_SCRIPT)
+	add_child(encounters)
 	_create_hud(player)
 
 func _setup_sky_and_lighting() -> void:
