@@ -8,8 +8,9 @@ var _cooldown := 0.0
 var _phase := 1
 var _time := 0.0
 var _player: Node3D
+var _reward_claimed := false
 var _body: MeshInstance3D
-var _bar: Label
+var _bar: Label3D
 
 func _ready() -> void:
 	health = max_health
@@ -46,9 +47,12 @@ func _ready() -> void:
 	eye_mat.emission = Color(0.1,0.7,1.0)
 	eye.material_override = eye_mat
 	add_child(eye)
-	_bar = Label.new()
+	_bar = Label3D.new()
 	_bar.text = "%s  %d/%d" % [display_name, health, max_health]
-	_bar.position = Vector2(-90, -35)
+	_bar.position = Vector3(0, shape.height + 0.8, 0)
+	_bar.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	_bar.font_size = 32
+	_bar.pixel_size = 0.006
 	_bar.add_theme_font_size_override("font_size", 14 if boss_mode else 11)
 	add_child(_bar)
 
@@ -89,6 +93,16 @@ func receive_damage(amount: int) -> void:
 		_phase = 2
 	_bar.text = "%s  %d/%d%s" % [display_name, health, max_health, " • PHASE 2" if _phase == 2 else ""]
 	if health == 0:
+		if not _reward_claimed:
+			_reward_claimed = true
+			var manager := get_node_or_null("/root/SaveManager")
+			if is_instance_valid(_player) and _player.has_method("award_xp"):
+				_player.award_xp(120 if boss_mode else 25)
+			if manager:
+				if boss_mode:
+					manager.record_boss_defeat(display_name)
+				else:
+					manager.add_item("Эфирный осколок", 1)
 		_bar.text = "ПОБЕЖДЁН • " + display_name
 		_body.visible = false
 		$CollisionShape3D.set_deferred("disabled", true)
