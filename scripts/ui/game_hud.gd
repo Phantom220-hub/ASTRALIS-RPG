@@ -83,8 +83,8 @@ func _toggle_pause() -> void:
 
 func _reset_game() -> void:
 	get_tree().paused = false
-	if has_node("/root/SaveManager"):
-		SaveManager.reset_progress()
+	if get_node_or_null("/root/SaveManager") != null:
+		get_node("/root/SaveManager").reset_progress()
 	get_tree().reload_current_scene()
 
 func _position_pause_button(button: Button) -> void:
