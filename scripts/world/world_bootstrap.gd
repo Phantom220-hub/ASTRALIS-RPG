@@ -88,6 +88,7 @@ func _build_first_region() -> void:
 	add_child(ground_body)
 
 	_add_path()
+	_add_anime_landscape()
 	_add_ruin_gate(Vector3(0, 0, -12))
 	_add_ruin_pillars()
 	_add_stylized_rock(Vector3(-11, 0.0, -7), Vector3(3.2, 2.2, 2.8))
@@ -376,3 +377,65 @@ func _add_distant_landmarks() -> void:
 		crystal.rotation.z = randf_range(-0.2, 0.2)
 		crystal.material_override = crystal_mat
 		add_child(crystal)
+
+
+func _add_anime_landscape() -> void:
+	# Mobile-friendly stylized grass patches, distant mountain silhouettes and drifting clouds.
+	var grass_colors := [
+		Color(0.22, 0.43, 0.34), Color(0.29, 0.51, 0.39),
+		Color(0.36, 0.56, 0.43), Color(0.18, 0.37, 0.32)
+	]
+	for i in range(34):
+		var patch := MeshInstance3D.new()
+		var patch_mesh := PlaneMesh.new()
+		patch_mesh.size = Vector2(randf_range(2.0, 5.5), randf_range(2.0, 5.5))
+		patch.mesh = patch_mesh
+		patch.position = Vector3(randf_range(-42.0, 42.0), -0.135, randf_range(-48.0, 35.0))
+		var patch_mat := StandardMaterial3D.new()
+		patch_mat.albedo_color = grass_colors[i % grass_colors.size()]
+		patch_mat.roughness = 1.0
+		patch.material_override = patch_mat
+		add_child(patch)
+	for i in range(75):
+		var tuft := MeshInstance3D.new()
+		var blade := PrismMesh.new()
+		blade.size = Vector3(0.12, randf_range(0.22, 0.48), 0.10)
+		tuft.mesh = blade
+		tuft.position = Vector3(randf_range(-38.0, 38.0), 0.08, randf_range(-42.0, 28.0))
+		tuft.rotation.y = randf_range(0.0, TAU)
+		var blade_mat := StandardMaterial3D.new()
+		blade_mat.albedo_color = grass_colors[i % grass_colors.size()].lightened(0.12)
+		tuft.material_override = blade_mat
+		add_child(tuft)
+	var mountain_mat := StandardMaterial3D.new()
+	mountain_mat.albedo_color = Color(0.12, 0.22, 0.36)
+	mountain_mat.roughness = 1.0
+	for i in range(13):
+		var mountain := MeshInstance3D.new()
+		var peak := PrismMesh.new()
+		peak.size = Vector3(randf_range(12.0, 22.0), randf_range(9.0, 20.0), randf_range(7.0, 13.0))
+		mountain.mesh = peak
+		mountain.position = Vector3(-58.0 + i * 9.5, peak.size.y * 0.5 - 1.0, -82.0)
+		mountain.material_override = mountain_mat
+		add_child(mountain)
+	var cloud_mat := StandardMaterial3D.new()
+	cloud_mat.albedo_color = Color(0.66, 0.81, 0.94, 0.72)
+	cloud_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	cloud_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	for i in range(8):
+		var cloud := Node3D.new()
+		cloud.name = "SoftCloud_%02d" % i
+		cloud.position = Vector3(-38.0 + i * 10.5, 24.0 + randf_range(-2.0, 5.0), -58.0 - randf_range(0.0, 22.0))
+		for puff in range(3):
+			var cloud_mesh := MeshInstance3D.new()
+			var puff_mesh := SphereMesh.new()
+			puff_mesh.radius = randf_range(1.8, 3.2)
+			puff_mesh.height = puff_mesh.radius * 0.7
+			cloud_mesh.mesh = puff_mesh
+			cloud_mesh.position = Vector3((puff - 1) * 1.8, randf_range(-0.35, 0.35), 0.0)
+			cloud_mesh.material_override = cloud_mat
+			cloud.add_child(cloud_mesh)
+		add_child(cloud)
+		var drift := create_tween().set_loops()
+		drift.tween_property(cloud, "position:x", cloud.position.x + 3.0, 12.0).set_trans(Tween.TRANS_SINE)
+		drift.tween_property(cloud, "position:x", cloud.position.x - 3.0, 12.0).set_trans(Tween.TRANS_SINE)
