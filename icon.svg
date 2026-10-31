@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b43"/><stop offset="1" stop-color="#050916"/></linearGradient>
+ <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9ffff"/><stop offset=".42" stop-color="#55dfff"/><stop offset="1" stop-color="#4773ff"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#38cfff" stop-opacity=".55"/><stop offset="1" stop-color="#38cfff" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<circle cx="256" cy="248" r="190" fill="url(#glow)"/>
+<path d="M256 48 300 174 420 256 300 338 256 464 212 338 92 256 212 174Z" fill="none" stroke="#72dfff" stroke-width="10" opacity=".9"/>
+<path d="M256 104 302 220 376 256 302 292 256 408 210 292 136 256 210 220Z" fill="url(#crystal)" stroke="#e1ffff" stroke-width="8" stroke-linejoin="round"/>
+<path d="M256 104 256 408 210 292 136 256 210 220Z" fill="#a3f4ff" opacity=".62"/>
+<circle cx="256" cy="256" r="18" fill="#fff" />
+<path d="M112 414 Q256 466 400 414" fill="none" stroke="#6ccfff" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+</svg>
