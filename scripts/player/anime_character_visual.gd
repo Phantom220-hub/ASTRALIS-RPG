@@ -78,4 +78,10 @@ func animate_locomotion(speed_ratio: float, delta: float, airborne: bool) -> voi
 			var sign := 1.0 if key.ends_with("L") else -1.0
 			var pivot: Node3D = _parts[key]
 			pivot.rotation.x = -swing * sign * 0.72 if not airborne else 0.45
-	position.y = 0.035 * absf(sin(_time * 10.0)) * clampf(speed_ratio, 0.0, 1.0) if not airborne else 0.0
+	var moving := clampf(speed_ratio, 0.0, 1.0)
+	var idle_breath := sin(_time * 2.2) * 0.018
+	position.y = (0.035 * absf(sin(_time * 10.0)) * moving + idle_breath) if not airborne else 0.0
+	rotation.z = sin(_time * 1.4) * 0.012
+	if _parts.has("ArmPivotR") and moving < 0.05 and not airborne:
+		var idle_arm: Node3D = _parts["ArmPivotR"]
+		idle_arm.rotation.z = sin(_time * 1.7) * 0.035
