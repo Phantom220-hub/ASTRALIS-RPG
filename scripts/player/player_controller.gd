@@ -142,10 +142,15 @@ func _cast_echo_pulse() -> void:
 			if target.has_method("receive_pulse"):
 				target.receive_pulse()
 
+func rotate_camera_drag(relative: Vector2) -> void:
+	camera_pivot.rotate_y(-relative.x * 0.006)
+	camera_pivot.rotation.x = clampf(camera_pivot.rotation.x - relative.y * 0.0045, -0.72, 0.42)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag:
-		camera_pivot.rotate_y(-event.relative.x * 0.003)
-		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x - event.relative.y * 0.003, -0.65, 0.35)
+		rotate_camera_drag(event.relative)
+	elif event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+		rotate_camera_drag(event.relative)
 
 func _perform_attack() -> void:
 	if energy < 5.0:
