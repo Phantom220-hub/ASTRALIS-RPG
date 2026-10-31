@@ -6,6 +6,7 @@ config_version=5
 [application]
 
 config/name="ASTRALIS: Echoes of the Lost World"
+config/icon="res://icon.svg"
 run/main_scene="res://scenes/main/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/description="An original mobile-first 3D fantasy action RPG."
