@@ -5,6 +5,7 @@ const RELIC_SCRIPT := preload("res://scripts/world/ancient_relic.gd")
 const DUMMY_SCRIPT := preload("res://scripts/world/waypoint_dummy.gd")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 const ENCOUNTER_SCRIPT := preload("res://scripts/combat/encounter_director.gd")
+const FRAGMENT_SCRIPT := preload("res://scripts/world/echo_fragment.gd")
 
 var _hud: Control
 var _relic: Area3D
@@ -101,6 +102,8 @@ func _build_first_region() -> void:
 	_add_glowing_marker(Vector3(0, 0.0, -8))
 	_add_ambient_lights()
 	_add_frozen_ruins()
+	_add_echo_fragment_route()
+	_add_distant_landmarks()
 
 func _add_path() -> void:
 	var path := MeshInstance3D.new()
@@ -313,3 +316,58 @@ func _add_frozen_ruins() -> void:
 	platform.position = Vector3(0,-0.05,-68)
 	platform.material_override = ice
 	add_child(platform)
+
+
+func _add_echo_fragment_route() -> void:
+	var points := [
+		Vector3(-15, 0.0, -27), Vector3(14, 0.0, -30),
+		Vector3(-18, 0.0, -43), Vector3(18, 0.0, -45),
+		Vector3(-7, 0.0, -57), Vector3(8, 0.0, -59),
+		Vector3(-15, 0.0, -72), Vector3(15, 0.0, -76)
+	]
+	for index in range(points.size()):
+		var fragment := Area3D.new()
+		fragment.name = "EchoFragment_%02d" % (index + 1)
+		fragment.set_script(FRAGMENT_SCRIPT)
+		fragment.fragment_id = "echo_%02d" % (index + 1)
+		fragment.position = points[index]
+		add_child(fragment)
+
+func _add_distant_landmarks() -> void:
+	# A ruined observatory marks the western ridge; a crystal grove marks the east.
+	var stone := StandardMaterial3D.new()
+	stone.albedo_color = Color(0.31, 0.38, 0.47)
+	stone.roughness = 0.9
+	for side in [-1.0, 1.0]:
+		var base := MeshInstance3D.new()
+		var base_mesh := CylinderMesh.new()
+		base_mesh.top_radius = 2.8
+		base_mesh.bottom_radius = 3.5
+		base_mesh.height = 0.7
+		base.mesh = base_mesh
+		base.position = Vector3(side * 23.0, 0.0, -36.0)
+		base.material_override = stone
+		add_child(base)
+		for pillar_index in range(4):
+			var pillar := MeshInstance3D.new()
+			var pillar_mesh := BoxMesh.new()
+			pillar_mesh.size = Vector3(0.55, 4.2 + float(pillar_index % 2), 0.55)
+			pillar.mesh = pillar_mesh
+			var angle := float(pillar_index) * TAU / 4.0
+			pillar.position = Vector3(side * 23.0 + cos(angle) * 2.0, pillar_mesh.size.y * 0.5, -36.0 + sin(angle) * 2.0)
+			pillar.material_override = stone
+			add_child(pillar)
+	var crystal_mat := StandardMaterial3D.new()
+	crystal_mat.albedo_color = Color(0.19, 0.62, 0.78)
+	crystal_mat.emission_enabled = true
+	crystal_mat.emission = Color(0.06, 0.35, 0.7)
+	crystal_mat.emission_energy_multiplier = 1.6
+	for i in range(14):
+		var crystal := MeshInstance3D.new()
+		var crystal_mesh := PrismMesh.new()
+		crystal_mesh.size = Vector3(randf_range(0.5, 1.1), randf_range(1.4, 3.8), Vector3(0.5, 1.0).x)
+		crystal.mesh = crystal_mesh
+		crystal.position = Vector3(25.0 + randf_range(-7.0, 7.0), crystal_mesh.size.y * 0.5, -57.0 + randf_range(-8.0, 8.0))
+		crystal.rotation.z = randf_range(-0.2, 0.2)
+		crystal.material_override = crystal_mat
+		add_child(crystal)
