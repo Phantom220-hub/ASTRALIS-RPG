@@ -8,6 +8,7 @@ var _dash_touch := -1
 var _cast_touch := -1
 var _interact_touch := -1
 var _attack_touch := -1
+var _camera_touch := -1
 var _joy_vector := Vector2.ZERO
 
 func _ready() -> void:
@@ -56,16 +57,22 @@ func _gui_input(event: InputEvent) -> void:
 			var attack_pos := Vector2(size.x - 92.0, size.y - 325.0)
 			var is_button: bool = event.position.distance_to(jump_pos) <= BUTTON_RADIUS * 1.25 or event.position.distance_to(dash_pos) <= BUTTON_RADIUS or event.position.distance_to(cast_pos) <= BUTTON_RADIUS or event.position.distance_to(interact_pos) <= BUTTON_RADIUS or event.position.distance_to(attack_pos) <= BUTTON_RADIUS
 			var is_joystick: bool = event.position.x < size.x * 0.48 and event.position.y > size.y * 0.48
-			if is_button or is_joystick:
+			if is_button or is_joystick or event.position.x >= size.x * 0.48:
 				_handle_press(event.index, event.position)
 				accept_event()
 		else:
-			if event.index in [_joy_touch, _jump_touch, _dash_touch, _cast_touch, _interact_touch, _attack_touch]:
+			if event.index in [_joy_touch, _jump_touch, _dash_touch, _cast_touch, _interact_touch, _attack_touch, _camera_touch]:
 				_handle_release(event.index)
 				accept_event()
-	elif event is InputEventScreenDrag and event.index == _joy_touch:
-		_update_joystick(event.position)
-		accept_event()
+	elif event is InputEventScreenDrag:
+		if event.index == _joy_touch:
+			_update_joystick(event.position)
+			accept_event()
+		elif event.index == _camera_touch:
+			var players := get_tree().get_nodes_in_group("player")
+			if not players.is_empty() and players[0].has_method("rotate_camera_drag"):
+				players[0].rotate_camera_drag(event.relative)
+			accept_event()
 
 func _handle_press(index: int, pos: Vector2) -> void:
 	var size := get_rect().size
@@ -92,6 +99,8 @@ func _handle_press(index: int, pos: Vector2) -> void:
 	elif pos.x < size.x * 0.48 and pos.y > size.y * 0.48:
 		_joy_touch = index
 		_update_joystick(pos)
+	elif pos.x >= size.x * 0.48:
+		_camera_touch = index
 
 func _handle_release(index: int) -> void:
 	if index == _joy_touch:
@@ -113,6 +122,8 @@ func _handle_release(index: int) -> void:
 	if index == _attack_touch:
 		_attack_touch = -1
 		Input.action_release("attack")
+	if index == _camera_touch:
+		_camera_touch = -1
 	queue_redraw()
 
 func _update_joystick(pos: Vector2) -> void:
