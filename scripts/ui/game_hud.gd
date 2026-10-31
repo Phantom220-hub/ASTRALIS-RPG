@@ -36,6 +36,7 @@ func _ready() -> void:
 	_add_top_button("СУМКА", 178, _show_inventory)
 	_add_top_button("ЗАДАНИЯ", 286, _show_quests)
 	get_viewport().size_changed.connect(_reposition_top_buttons)
+	_show_title_screen()
 
 func _process(delta: float) -> void:
 	_pulse += delta
@@ -97,7 +98,8 @@ func _show_quests() -> void:
 	var first := "Пробудить древний реликт: " + ("ВЫПОЛНЕНО" if SaveManager.relic_awakened else "НЕ ВЫПОЛНЕНО")
 	var second := "Победить VARKHOS: " + ("ВЫПОЛНЕНО" if SaveManager.defeated_bosses.has("VARKHOS — Fallen Guardian") else "НЕ ВЫПОЛНЕНО")
 	var third := "Победить NYTHERA: " + ("ВЫПОЛНЕНО" if SaveManager.defeated_bosses.has("NYTHERA — Queen of the Void") else "НЕ ВЫПОЛНЕНО")
-	_show_overlay("ЖУРНАЛ ЗАДАНИЙ", first + "\n\n" + second + "\n\n" + third, false)
+	var fragments := "Собрать эхо-фрагменты: %d / 8" % SaveManager.collected_fragments.size()
+	_show_overlay("ЖУРНАЛ ЗАДАНИЙ", first + "\n\n" + second + "\n\n" + third + "\n\n" + fragments, false)
 
 func _show_overlay(title_text: String, body_text: String, can_heal: bool) -> void:
 	if is_instance_valid(overlay_panel):
@@ -184,3 +186,58 @@ func _make_label(value: String, at: Vector2, font_size: int) -> Label:
 	label.add_theme_color_override("font_color", Color.WHITE)
 	add_child(label)
 	return label
+
+
+func _show_title_screen() -> void:
+	get_tree().paused = true
+	var backdrop := ColorRect.new()
+	backdrop.name = "TitleScreen"
+	backdrop.process_mode = Node.PROCESS_MODE_ALWAYS
+	backdrop.color = Color(0.015, 0.035, 0.085, 0.96)
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var layout := VBoxContainer.new()
+	layout.process_mode = Node.PROCESS_MODE_ALWAYS
+	layout.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	layout.position = Vector2(-190, -170)
+	layout.size = Vector2(380, 340)
+	layout.add_theme_constant_override("separation", 18)
+	backdrop.add_child(layout)
+	var title := Label.new()
+	title.text = "ASTRALIS"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 42)
+	title.add_theme_color_override("font_color", Color(0.45, 0.84, 1.0))
+	layout.add_child(title)
+	var subtitle := Label.new()
+	subtitle.text = "ECHOES OF THE LOST WORLD"
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.add_theme_font_size_override("font_size", 14)
+	layout.add_child(subtitle)
+	var story := Label.new()
+	story.text = "Мир потерял своё эхо.\nНайди фрагменты памяти и пробуди древнюю силу."
+	story.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	story.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	layout.add_child(story)
+	var continue_button := Button.new()
+	continue_button.text = "ПРОДОЛЖИТЬ"
+	continue_button.custom_minimum_size.y = 52
+	continue_button.pressed.connect(func():
+		backdrop.queue_free()
+		get_tree().paused = false
+	)
+	layout.add_child(continue_button)
+	var new_game := Button.new()
+	new_game.text = "НОВАЯ ИГРА"
+	new_game.custom_minimum_size.y = 48
+	new_game.pressed.connect(func():
+		SaveManager.reset_progress()
+		get_tree().reload_current_scene()
+	)
+	layout.add_child(new_game)
+	var hint := Label.new()
+	hint.text = "Мобильное управление • Исследование • Битвы с боссами"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.add_theme_font_size_override("font_size", 11)
+	layout.add_child(hint)
+	add_child(backdrop)
