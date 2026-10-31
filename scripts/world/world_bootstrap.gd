@@ -6,6 +6,7 @@ const DUMMY_SCRIPT := preload("res://scripts/world/waypoint_dummy.gd")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 const ENCOUNTER_SCRIPT := preload("res://scripts/combat/encounter_director.gd")
 const FRAGMENT_SCRIPT := preload("res://scripts/world/echo_fragment.gd")
+const CONTENT_SCRIPT := preload("res://scripts/world/whispering_vale.gd")
 
 var _hud: Control
 var _relic: Area3D
@@ -104,6 +105,10 @@ func _build_first_region() -> void:
 	_add_frozen_ruins()
 	_add_echo_fragment_route()
 	_add_distant_landmarks()
+	var vale := Node3D.new()
+	vale.name = "WhisperingValeContent"
+	vale.set_script(CONTENT_SCRIPT)
+	add_child(vale)
 
 func _add_path() -> void:
 	var path := MeshInstance3D.new()
