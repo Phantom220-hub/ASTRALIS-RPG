@@ -365,7 +365,7 @@ func _add_distant_landmarks() -> void:
 	for i in range(14):
 		var crystal := MeshInstance3D.new()
 		var crystal_mesh := PrismMesh.new()
-		crystal_mesh.size = Vector3(randf_range(0.5, 1.1), randf_range(1.4, 3.8), Vector3(0.5, 1.0).x)
+		crystal_mesh.size = Vector3(randf_range(0.5, 1.1), randf_range(1.4, 3.8), randf_range(0.5, 1.0))
 		crystal.mesh = crystal_mesh
 		crystal.position = Vector3(25.0 + randf_range(-7.0, 7.0), crystal_mesh.size.y * 0.5, -57.0 + randf_range(-8.0, 8.0))
 		crystal.rotation.z = randf_range(-0.2, 0.2)
