@@ -248,3 +248,12 @@ func _show_title_screen() -> void:
 	hint.add_theme_font_size_override("font_size", 11)
 	layout.add_child(hint)
 	add_child(backdrop)
+	backdrop.modulate.a = 0.0
+	layout.scale = Vector2(0.88, 0.88)
+	layout.pivot_offset = layout.size * 0.5
+	var intro := create_tween()
+	intro.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	intro.set_parallel(true)
+	intro.tween_property(backdrop, "modulate:a", 1.0, 0.85).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	intro.tween_property(layout, "scale", Vector2.ONE, 0.9).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	intro.tween_property(layout, "position:y", -185.0, 0.9).from(-145.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
