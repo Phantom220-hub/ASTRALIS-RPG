@@ -7,6 +7,7 @@ var player_xp := 0
 var gold := 0
 var defeated_bosses: Array[String] = []
 var collected_fragments: Array[String] = []
+var claimed_world_items: Array[String] = []
 var inventory: Dictionary = {"Эфирный осколок": 0, "Зелье лечения": 2}
 
 func _ready() -> void:
@@ -22,6 +23,7 @@ func load_game() -> void:
 	gold = int(config.get_value("player", "gold", 0))
 	defeated_bosses = config.get_value("story", "defeated_bosses", [])
 	collected_fragments = config.get_value("story", "collected_fragments", [])
+	claimed_world_items = config.get_value("world", "claimed_items", [])
 	inventory = config.get_value("inventory", "items", inventory)
 
 func save_game() -> void:
@@ -29,6 +31,7 @@ func save_game() -> void:
 	config.set_value("story", "first_relic_awakened", relic_awakened)
 	config.set_value("story", "defeated_bosses", defeated_bosses)
 	config.set_value("story", "collected_fragments", collected_fragments)
+	config.set_value("world", "claimed_items", claimed_world_items)
 	config.set_value("player", "level", player_level)
 	config.set_value("player", "xp", player_xp)
 	config.set_value("player", "gold", gold)
@@ -71,9 +74,18 @@ func collect_fragment(fragment_id: String) -> bool:
 	award_xp(35)
 	return true
 
+func claim_world_item(item_id: String, item_name: String, amount: int, xp: int) -> bool:
+	if claimed_world_items.has(item_id):
+		return false
+	claimed_world_items.append(item_id)
+	add_item(item_name, amount)
+	award_xp(xp)
+	return true
+
 func reset_progress() -> void:
 	relic_awakened = false
 	collected_fragments.clear()
+	claimed_world_items.clear()
 	player_level = 1
 	player_xp = 0
 	gold = 0
