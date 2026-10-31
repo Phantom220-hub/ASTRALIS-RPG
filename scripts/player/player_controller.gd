@@ -102,7 +102,7 @@ func _update_interaction_hint() -> void:
 	_interaction_hint = ""
 	var target := _nearest_interactable()
 	if target:
-		_interaction_hint = "НАЖМИ E / INTERACT  •  Пробудить реликт"
+		_interaction_hint = target.get_interaction_text() if target.has_method("get_interaction_text") else "НАЖМИ E / INTERACT  •  Взаимодействовать"
 
 func get_interaction_hint() -> String:
 	return _interaction_hint
