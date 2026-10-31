@@ -202,6 +202,13 @@ func _show_title_screen() -> void:
 	layout.size = Vector2(380, 340)
 	layout.add_theme_constant_override("separation", 18)
 	backdrop.add_child(layout)
+	var emblem := TextureRect.new()
+	emblem.name = "ASTRALISLogo"
+	emblem.texture = load("res://icon.svg")
+	emblem.custom_minimum_size = Vector2(104, 104)
+	emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	emblem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	layout.add_child(emblem)
 	var title := Label.new()
 	title.text = "ASTRALIS"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
